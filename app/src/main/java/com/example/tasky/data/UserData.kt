@@ -1,7 +1,8 @@
 package com.example.tasky.data
 
-class UserData(
-    var login: String,
-    var password: String,
+
+data class UserData(
+    val login: String,
+    val password: String,
 ) {
 }

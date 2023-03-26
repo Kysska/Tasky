@@ -1,6 +1,5 @@
 package com.example.tasky.presentation
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -8,10 +7,6 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.tasky.R
-import com.example.tasky.data.UserData
-import com.example.tasky.data.repository.UserRepositoryImpl
-import com.example.tasky.domain.usecase.GetDataUserUseCase
-import com.example.tasky.domain.usecase.SaveDataUserUseCase
 
 class MainActivity : AppCompatActivity() {
 

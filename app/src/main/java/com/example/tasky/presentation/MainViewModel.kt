@@ -3,7 +3,6 @@ package com.example.tasky.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.tasky.data.UserData
-import com.example.tasky.data.repository.UserRepositoryImpl
 import com.example.tasky.domain.usecase.GetDataUserUseCase
 import com.example.tasky.domain.usecase.SaveDataUserUseCase
 
