@@ -12,10 +12,15 @@
         android:theme="@style/Theme.Tasky"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.note.NoteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.Tasky.NoActionBar" />
+        <activity
             android:name=".presentation.note.AddNote"
             android:exported="false" />
         <activity
-            android:name=".presentation.note.NoteActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

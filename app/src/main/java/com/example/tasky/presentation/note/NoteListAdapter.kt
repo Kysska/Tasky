@@ -1,6 +1,5 @@
 package com.example.tasky.presentation.note
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,10 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tasky.R
 import com.example.tasky.data.Note
+import com.example.tasky.presentation.fragments.NoteFragment
+import java.security.AccessController.getContext
 
-class NoteListAdapter(private val context: Context, val listener: NoteClickListener) :
+class NoteListAdapter(private val context: NoteFragment, val listener: NoteFragment) :
     RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
     private val NoteList = ArrayList<Note>()
     private val fullList = ArrayList<Note>()
@@ -20,7 +21,7 @@ class NoteListAdapter(private val context: Context, val listener: NoteClickListe
         viewType: Int
     ): NoteViewHolder {
         return NoteViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.note_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.note_item, parent, false)
         )
     }
 

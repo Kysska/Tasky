@@ -1,35 +1,41 @@
-package com.example.tasky.presentation.note
+package com.example.tasky.presentation.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.SearchView
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.tasky.R
 import com.example.tasky.data.Note
 import com.example.tasky.data.db.NoteDatabase
-import com.example.tasky.databinding.ActivityMainBinding
+import com.example.tasky.databinding.FragmentNoteBinding
+import com.example.tasky.presentation.note.AddNote
+import com.example.tasky.presentation.note.NoteListAdapter
+import com.example.tasky.presentation.note.NoteViewModel
 import java.io.Serializable
 
-class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, PopupMenu.OnMenuItemClickListener{
 
-    private lateinit var binding: ActivityMainBinding
+class NoteFragment() : BaseFragment(),  NoteListAdapter.NoteClickListener, PopupMenu.OnMenuItemClickListener {
+    override val applicationContext: Context
+        get() = requireContext().applicationContext
+    private lateinit var binding: FragmentNoteBinding
     private lateinit var database: NoteDatabase
     private lateinit var vm: NoteViewModel
     lateinit var adapter: NoteListAdapter
     lateinit var selectedNote: Note
 
-    private val updateNote = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result ->
+    private val updateNote = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if(result.resultCode == Activity.RESULT_OK){
             val note = result.data?.serializable("note") as? Note
             if(note != null){
@@ -38,24 +44,28 @@ class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, Po
         }
 
     }
+    override fun onClickNew() {
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            binding = ActivityMainBinding.inflate(layoutInflater)
-            setContentView(binding.root)
+    }
 
-            initUI()
-            vm = ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(NoteViewModel::class.java)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentNoteBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-            vm.allnotes.observe(this){list ->
-               list?.let{
-                   adapter.updateList(list)
-               }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initUI()
+        vm = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)).get(NoteViewModel::class.java)
+
+        vm.allnotes.observe(viewLifecycleOwner){list ->
+            list?.let{
+                adapter.updateList(list)
             }
-
-            database = NoteDatabase.getDatabase(this)
         }
+
+        database = NoteDatabase.getDatabase(requireContext())
+    }
 
     inline fun <reified T : Serializable> Bundle.serializable(key: String): T? = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getSerializable(key, T::class.java)
@@ -84,7 +94,7 @@ class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, Po
 
         }
         binding.fbNote.setOnClickListener{
-            val intent = Intent(this, AddNote::class.java)
+            val intent = Intent(requireContext(), AddNote::class.java)
             getContent.launch(intent)
         }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
@@ -105,7 +115,7 @@ class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, Po
     }
 
     override fun onItemClicked(note: Note) {
-        val intent = Intent(this@NoteActivity, AddNote::class.java)
+        val intent = Intent(requireContext(), AddNote::class.java)
         intent.putExtra("current_note", note)
         updateNote.launch(intent)
 
@@ -117,8 +127,8 @@ class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, Po
     }
 
     private fun popUpDisplay(cardView: CardView) {
-        val popup = PopupMenu(this, cardView)
-        popup.setOnMenuItemClickListener(this@NoteActivity)
+        val popup = PopupMenu(requireContext(), cardView)
+        popup.setOnMenuItemClickListener(this)
         popup.inflate(R.menu.pop_up_menu_note)
         popup.show()
     }
@@ -130,5 +140,12 @@ class NoteActivity : AppCompatActivity(),  NoteListAdapter.NoteClickListener, Po
         }
         return false
     }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): BaseFragment = NoteFragment()
+    }
+
 }
+
 
