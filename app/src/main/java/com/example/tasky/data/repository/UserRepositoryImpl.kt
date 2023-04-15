@@ -1,21 +1,15 @@
 package com.example.tasky.data.repository
 
-import android.content.Context
+import androidx.lifecycle.LiveData
 import com.example.tasky.data.UserData
-import com.example.tasky.data.storage.UserStorage
-import com.example.tasky.domain.repository.UserRepository
 
 
-class UserRepositoryImpl(private val userStorage: UserStorage) : UserRepository {
+class UserRepositoryImpl(private val userDao: UserDao){
 
-    override fun saveName(saveParam: UserData): Boolean{
-        val result = userStorage.save(saveParam)
-        return result
-    }
+    val allUserData: LiveData<List<UserData>> = userDao.getUser()
 
-    override fun getName(): UserData {
-        val user = userStorage.get()
-        return user
+    suspend fun saveName(userData: UserData){
+        userDao.save(userData)
     }
 
 }

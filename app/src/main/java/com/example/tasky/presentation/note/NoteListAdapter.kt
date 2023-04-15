@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tasky.R
 import com.example.tasky.data.Note
 import com.example.tasky.presentation.fragments.NoteFragment
+import com.example.tasky.utilites.HTMLManager
 import java.security.AccessController.getContext
 
 class NoteListAdapter(private val context: NoteFragment, val listener: NoteFragment) :
@@ -30,7 +31,7 @@ class NoteListAdapter(private val context: NoteFragment, val listener: NoteFragm
         holder.title.text = currentNote.title
         holder.title.isSelected = true
 
-        holder.desc.text = currentNote.desc
+        holder.desc.text = HTMLManager.getFromHtml(currentNote.desc!!).trim()
         holder.date.text = currentNote.date
         holder.date.isSelected = true
 

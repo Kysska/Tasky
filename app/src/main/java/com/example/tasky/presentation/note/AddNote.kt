@@ -2,13 +2,16 @@ package com.example.tasky.presentation.note
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Spannable
+import android.text.style.StyleSpan
 import android.widget.Toast
-import com.example.tasky.R
 import com.example.tasky.data.Note
 import com.example.tasky.databinding.ActivityAddNoteBinding
+import com.example.tasky.utilites.HTMLManager
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,26 +42,32 @@ class AddNote : AppCompatActivity() {
         try{
             old_note = intent.serializable<Note>("current_note") as Note
             binding.edTitle.setText(old_note.title)
-            binding.edDesc.setText(old_note.desc)
+            binding.edDesc.setText(HTMLManager.getFromHtml(old_note.desc!!).trim())
             isUpdate = true
         }catch (e: java.lang.Exception){
             e.printStackTrace()
         }
+        binding.imgBold.setOnClickListener{
+            setBoldForSelectedText()
+        }
+        binding.imgImg.setOnClickListener{
+
+        }
         binding.imgCheck.setOnClickListener{
             val title = binding.edTitle.text.toString()
-            val desc = binding.edDesc.text.toString()
+            val desc = binding.edDesc.text
 
             if(title.isNotEmpty() || desc.isNotEmpty()){
                 val formatter = SimpleDateFormat("EEE, d MMM yyyy HH:mm a")
 
                 if(isUpdate){
                     note = Note(
-                        old_note.id,title,desc,formatter.format(Date())
+                        old_note.id,title,desc = HTMLManager.toHtml(desc),formatter.format(Date())
                     )
                 }
                 else{
                     note = Note(
-                        null, title, desc, formatter.format(Date())
+                        null, title, desc = HTMLManager.toHtml(desc), formatter.format(Date())
                     )
                 }
 
@@ -75,5 +84,22 @@ class AddNote : AppCompatActivity() {
         binding.imgBack.setOnClickListener{
             onBackPressedDispatcher.onBackPressed()
         }
+    }
+
+    private fun setBoldForSelectedText() = with(binding) {
+        val startPos = edDesc.selectionStart
+        val endPos = edDesc.selectionEnd
+
+        val style = edDesc.text.getSpans(startPos, endPos, StyleSpan::class.java)
+        var boldStyle: StyleSpan? = null
+        if(style.isNotEmpty()){
+            edDesc.text.removeSpan(style[0])
+        }
+        else{
+            boldStyle = StyleSpan(Typeface.BOLD)
+        }
+        edDesc.text.setSpan(boldStyle, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        edDesc.text.trim()
+        edDesc.setSelection(startPos)
     }
 }
