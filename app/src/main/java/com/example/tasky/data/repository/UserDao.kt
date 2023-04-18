@@ -12,4 +12,10 @@ interface UserDao {
     @Query("Select * from users_table")
     fun getUser(): LiveData<List<UserData>>
 
+    @Query("Select * from users_table WHERE name = :login")
+    fun getUserName(login: String): UserData?
+
+    @Query("SELECT COUNT(*) FROM users_table")
+    fun getUserCount(): Int
+
 }

@@ -7,6 +7,7 @@ import com.example.tasky.R
 import com.example.tasky.databinding.ActivityMain2Binding
 import com.example.tasky.presentation.fragments.FragmentManager
 import com.example.tasky.presentation.fragments.NoteFragment
+import com.example.tasky.presentation.fragments.UserFragment
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMain2Binding
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MyLog", "forum")
                 }
                 R.id.profile->{
-                    Log.d("MyLog", "profile")
+                    FragmentManager.setFragment(UserFragment.newInstance(), this)
                 }
             }
             true
